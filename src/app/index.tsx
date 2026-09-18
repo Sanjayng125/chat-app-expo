@@ -7,7 +7,7 @@ const Index = () => {
 
   useEffect(() => {
     if (session) router.replace("/(app)");
-    else router.replace("/(auth)/sign-in");
+    else router.replace("/(auth)/welcome");
   }, [session]);
 
   return null;

@@ -1,0 +1,94 @@
+import Button from "@/components/ui/Button";
+import { ColorScheme } from "@/constants/colors";
+import { Fonts } from "@/constants/fonts";
+import { useTheme } from "@/hooks/useTheme";
+import { router } from "expo-router";
+import { useMemo } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const Welcome = () => {
+  const { colors } = useTheme();
+
+  const styles = useMemo(() => getStyles(colors), [colors]);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require("@assets/images/logo.png")}
+          style={styles.logo}
+        />
+      </View>
+
+      <Text style={styles.title}>Welcome to Chat App</Text>
+      <Text style={styles.subtitle}>Chat without the noise.</Text>
+
+      <Button
+        onPress={() => router.push("/(auth)/sign-up")}
+        text="Get Started"
+      />
+
+      <View style={styles.footer}>
+        <Text style={styles.subtitle}>Already have an account?</Text>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.signInBtn}
+          onPress={() => router.push("/(auth)/sign-in")}
+        >
+          <Text style={styles.signInBtnText}>Sign-In</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const getStyles = (colors: ColorScheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 20,
+      alignItems: "center",
+    },
+    logo: {
+      width: 400,
+      height: 400,
+    },
+    logoContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 60,
+    },
+    title: {
+      fontSize: 24,
+      fontFamily: Fonts.extraBold,
+      marginTop: 20,
+      textAlign: "center",
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      fontFamily: Fonts.bold,
+    },
+    footer: {
+      marginTop: 40,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+    },
+    signInBtn: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    signInBtnText: {
+      color: colors.primary,
+      fontSize: 16,
+      fontFamily: Fonts.bold,
+      textAlign: "center",
+    },
+  });
+
+export default Welcome;
