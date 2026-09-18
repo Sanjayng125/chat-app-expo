@@ -25,6 +25,7 @@ export default function Button({
   text,
   children,
   loading,
+  disabled,
 }: ButtonProps) {
   const { colors } = useTheme();
 
@@ -33,8 +34,8 @@ export default function Button({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[btnStyles, styles.button, loading && { opacity: 0.5 }]}
-      disabled={loading}
+      style={[btnStyles, styles.button, disabled && { opacity: 0.5 }]}
+      disabled={disabled}
       onPress={onPress}
     >
       {text && <Text style={[txtStyles, styles.buttonText]}>{text}</Text>}

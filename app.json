@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "chat-app",
-    "slug": "chat-app",
+    "name": "convo",
+    "slug": "convo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "chat-app",
+    "scheme": "convo",
     "experiments": {
       "typedRoutes": true
     },
@@ -25,10 +25,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-status-bar",
-      "expo-font"
-    ]
+    "plugins": ["expo-router", "expo-status-bar", "expo-font"]
   }
 }

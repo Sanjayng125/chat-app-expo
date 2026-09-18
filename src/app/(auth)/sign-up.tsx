@@ -3,14 +3,16 @@ import TextField from "@/components/ui/TextField";
 import { ColorScheme } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import { useTheme } from "@/hooks/useTheme";
+import { SignUpSchema, SignUpSchemaType } from "@/lib/schemas";
 import { signUp } from "@/services/auth";
 import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -21,24 +23,29 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const { colors } = useTheme();
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
 
   const styles = useMemo(() => getStyles(colors), [colors]);
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<SignUpSchemaType>({
+    resolver: zodResolver(SignUpSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+    },
+  });
+
   const { mutate: signUpMutation, isPending: isSignUpPending } = useMutation({
-    mutationFn: async () => {
-      const { session, user } = await signUp(
-        formData.email,
-        formData.password,
-        formData.fullName,
-      );
+    mutationFn: async ({ email, password, fullName }: SignUpSchemaType) => {
+      const { session, user } = await signUp(email, password, fullName);
 
       return { session, user };
     },
@@ -47,31 +54,45 @@ const SignUp = () => {
     },
     onError: (error: AuthError) => {
       if (error.code === "email_address_invalid") {
-        Alert.alert("Invalid Email", "Please check your email");
+        Toast.show({
+          type: "error",
+          text1: "Invalid Email",
+          text2: "Please check your email",
+        });
         return;
       }
 
-      if (error.code === "email_exists") {
-        Alert.alert("Email Already Exists", "Please check your email");
+      if (
+        error.code === "user_already_exists" ||
+        error.code === "email_exists"
+      ) {
+        Toast.show({
+          type: "error",
+          text1: "User Already Exists",
+          text2: "You can sign in with your email",
+        });
         return;
       }
 
       if (error.code === "weak_password") {
-        Alert.alert("Weak Password", "Please check your password");
+        Toast.show({
+          type: "error",
+          text1: "Weak Password",
+          text2: "Please check your password",
+        });
         return;
       }
 
-      Alert.alert("Error", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+      });
     },
   });
 
-  const handleSubmit = () => {
-    if (!formData.email || !formData.password || !formData.fullName) {
-      Alert.alert("Missing Fields", "Please fill all fields");
-      return;
-    }
-    signUpMutation();
-  };
+  const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) =>
+    signUpMutation(data);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,34 +123,64 @@ const SignUp = () => {
           <Text style={styles.title}>Create new account</Text>
 
           <View>
-            <TextField
-              placeholder="Full Name"
-              value={formData.fullName}
-              onChangeText={(text) =>
-                setFormData({ ...formData, fullName: text })
-              }
+            <Controller
+              control={control}
+              name="fullName"
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  placeholder="Full Name"
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
             />
-            <TextField
-              placeholder="Email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={formData.email}
-              onChangeText={(text) => setFormData({ ...formData, email: text })}
+            {errors.fullName && (
+              <Text style={styles.error}>{errors.fullName.message}</Text>
+            )}
+          </View>
+
+          <View>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
             />
-            <TextField
-              placeholder="Password"
-              secureTextEntry
-              value={formData.password}
-              onChangeText={(text) =>
-                setFormData({ ...formData, password: text })
-              }
+            {errors.email && (
+              <Text style={styles.error}>{errors.email.message}</Text>
+            )}
+          </View>
+
+          <View>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  placeholder="Password"
+                  secureTextEntry
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
             />
+            {errors.password && (
+              <Text style={styles.error}>{errors.password.message}</Text>
+            )}
           </View>
 
           <Button
-            onPress={() => handleSubmit()}
+            onPress={handleSubmit(onSubmit)}
             text="Sign-Up"
             loading={isSignUpPending}
+            disabled={isSignUpPending}
           />
 
           <View style={styles.footer}>
@@ -164,18 +215,18 @@ const getStyles = (colors: ColorScheme) =>
       paddingHorizontal: 4,
     },
     logo: {
-      width: 250,
-      height: 250,
+      width: 300,
+      height: 300,
     },
     logoContainer: {
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 60,
+      marginTop: 20,
     },
     title: {
       fontSize: 24,
       fontFamily: Fonts.extraBold,
-      marginTop: 20,
+      marginTop: 10,
       textAlign: "center",
       color: colors.text,
     },
@@ -183,6 +234,12 @@ const getStyles = (colors: ColorScheme) =>
       fontSize: 16,
       color: colors.textSecondary,
       fontFamily: Fonts.bold,
+    },
+    error: {
+      fontSize: 12,
+      color: colors.error,
+      fontFamily: Fonts.bold,
+      paddingHorizontal: 4,
     },
     footer: {
       marginTop: 40,

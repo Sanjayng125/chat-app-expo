@@ -21,7 +21,7 @@ const Welcome = () => {
         />
       </View>
 
-      <Text style={styles.title}>Welcome to Chat App</Text>
+      <Text style={styles.title}>Welcome to Convo</Text>
       <Text style={styles.subtitle}>Chat without the noise.</Text>
 
       <Button
@@ -61,14 +61,14 @@ const getStyles = (colors: ColorScheme) =>
       marginTop: 60,
     },
     title: {
-      fontSize: 24,
+      fontSize: 28,
       fontFamily: Fonts.extraBold,
       marginTop: 20,
       textAlign: "center",
       color: colors.text,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: 18,
       color: colors.textSecondary,
       fontFamily: Fonts.bold,
     },
@@ -85,7 +85,7 @@ const getStyles = (colors: ColorScheme) =>
     },
     signInBtnText: {
       color: colors.primary,
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: Fonts.bold,
       textAlign: "center",
     },

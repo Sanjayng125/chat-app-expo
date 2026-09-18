@@ -13,6 +13,7 @@ export const Colors = {
             receivedText: '#000000',
         },
         focus: '#F0ECFF',
+        error: '#FF0000',
     },
     dark: {
         background: '#000000',
@@ -28,6 +29,7 @@ export const Colors = {
             receivedText: '#FFFFFF',
         },
         focus: '#F0ECFF',
+        error: '#FF0000',
     },
 };
 
