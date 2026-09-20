@@ -105,13 +105,15 @@ const SignUp = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.backBtn}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back-sharp" size={28} color={colors.text} />
-          </TouchableOpacity>
+          {router.canGoBack() && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.backBtn}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back-sharp" size={28} color={colors.text} />
+            </TouchableOpacity>
+          )}
 
           <View style={styles.logoContainer}>
             <Image

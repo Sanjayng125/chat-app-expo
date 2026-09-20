@@ -3,13 +3,13 @@ export interface User {
     email: string;
     full_name: string | null;
     avatar_url: string | null;
-    created_at: string;
+    created_at?: string;
 }
 
 export interface Conversation {
     id: string;
     created_at: string;
-    other_user: User;
+    other_users: User[];
     last_message?: Message;
 }
 

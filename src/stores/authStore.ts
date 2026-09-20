@@ -3,18 +3,18 @@ import { Session } from "@supabase/supabase-js";
 import { create } from "zustand";
 
 interface AuthStore {
-    user: User | null
     session: Session | null
-    setUser: (user: User | null) => void
+    user: User | null
     setSession: (session: Session | null) => void
+    setUser: (user: User | null) => void
 }
 
 export const useAuthStore = create<AuthStore>()(
     (set) => ({
-        user: null,
         session: null,
+        user: null,
 
-        setUser: (user: User | null) => set({ user }),
         setSession: (session: Session | null) => set({ session }),
+        setUser: (user: User | null) => set({ user }),
     })
 )

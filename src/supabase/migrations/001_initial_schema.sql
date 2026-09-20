@@ -8,24 +8,38 @@ CREATE TABLE public.users (
 );
 
 CREATE TABLE public.conversations (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  created_at  timestamptz DEFAULT now()
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at  timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.conversation_participants (
-  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  conversation_id   uuid NOT NULL REFERENCES public.conversations(id) ON DELETE CASCADE,
-  user_id           uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  joined_at         timestamptz DEFAULT now(),
-  UNIQUE(conversation_id, user_id)
+    conversation_id  uuid NOT NULL
+                     REFERENCES public.conversations(id)
+                     ON DELETE CASCADE,
+
+    user_id          uuid NOT NULL
+                     REFERENCES public.users(id)
+                     ON DELETE CASCADE,
+
+    joined_at        timestamptz NOT NULL DEFAULT now(),
+
+    PRIMARY KEY (conversation_id, user_id)
 );
 
 CREATE TABLE public.messages (
-  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  conversation_id   uuid NOT NULL REFERENCES public.conversations(id) ON DELETE CASCADE,
-  sender_id         uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  content           text NOT NULL,
-  created_at        timestamptz DEFAULT now()
+    id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    conversation_id   uuid NOT NULL
+                      REFERENCES public.conversations(id)
+                      ON DELETE CASCADE,
+
+    sender_id         uuid NOT NULL
+                      REFERENCES public.users(id)
+                      ON DELETE CASCADE,
+
+    content           text NOT NULL,
+
+    created_at        timestamptz NOT NULL DEFAULT now()
 );
 
 -- RLS
@@ -45,29 +59,32 @@ CREATE POLICY "users_update" ON public.users
 
 -- Conversations policies
 -- Only see conversations you're part of
-CREATE POLICY "conversations_select" ON public.conversations
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.conversation_participants
-      WHERE conversation_id = id
-      AND user_id = auth.uid()
-    )
-  );
+CREATE POLICY "conversations_select"
+ON public.conversations
+FOR SELECT
+USING (
+  id IN (
+    SELECT public.get_user_conversation_ids(auth.uid())
+  )
+);
 
 -- Any authenticated user can create a conversation
 CREATE POLICY "conversations_insert" ON public.conversations
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Participants policies
--- Only see participant rows for your conversations
-CREATE POLICY "participants_select" ON public.conversation_participants
+-- Only see participant rows for conversations you're part of
+CREATE OR REPLACE FUNCTION public.get_user_conversation_ids(uid uuid)
+RETURNS SETOF uuid
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT conversation_id FROM conversation_participants WHERE user_id = uid;
+$$;
+
+CREATE POLICY "participants_select" ON conversation_participants
   FOR SELECT USING (
-    user_id = auth.uid() OR
-    EXISTS (
-      SELECT 1 FROM public.conversation_participants cp
-      WHERE cp.conversation_id = conversation_id
-      AND cp.user_id = auth.uid()
-    )
+    conversation_id IN (SELECT public.get_user_conversation_ids(auth.uid()))
   );
 
 -- Any authenticated user can join/create

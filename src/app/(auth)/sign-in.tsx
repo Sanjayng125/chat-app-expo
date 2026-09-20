@@ -42,11 +42,7 @@ const SignIn = () => {
     },
   });
 
-  const {
-    mutate: signInMutation,
-    isPending: isSignInPending,
-    error: signInError,
-  } = useMutation({
+  const { mutate: signInMutation, isPending: isSignInPending } = useMutation({
     mutationFn: async ({ email, password }: SignInSchemaType) => {
       const { session, user } = await signIn(email, password);
 
@@ -97,13 +93,15 @@ const SignIn = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.backBtn}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back-sharp" size={28} color={colors.text} />
-          </TouchableOpacity>
+          {router.canGoBack() && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.backBtn}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back-sharp" size={28} color={colors.text} />
+            </TouchableOpacity>
+          )}
 
           <View style={styles.logoContainer}>
             <Image

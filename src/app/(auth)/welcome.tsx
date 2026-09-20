@@ -14,10 +14,10 @@ const Welcome = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.logoContainer}>
+      <View style={styles.welcomeImageContainer}>
         <Image
-          source={require("@assets/images/logo.png")}
-          style={styles.logo}
+          source={require("@assets/images/welcome.png")}
+          style={styles.welcomeImage}
         />
       </View>
 
@@ -27,6 +27,7 @@ const Welcome = () => {
       <Button
         onPress={() => router.push("/(auth)/sign-up")}
         text="Get Started"
+        style={{ width: "100%" }}
       />
 
       <View style={styles.footer}>
@@ -51,11 +52,11 @@ const getStyles = (colors: ColorScheme) =>
       paddingHorizontal: 20,
       alignItems: "center",
     },
-    logo: {
+    welcomeImage: {
       width: 400,
       height: 400,
     },
-    logoContainer: {
+    welcomeImageContainer: {
       alignItems: "center",
       justifyContent: "center",
       marginTop: 60,

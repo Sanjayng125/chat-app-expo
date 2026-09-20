@@ -34,7 +34,7 @@ export default function Button({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[btnStyles, styles.button, disabled && { opacity: 0.5 }]}
+      style={[styles.button, btnStyles, disabled && { opacity: 0.5 }]}
       disabled={disabled}
       onPress={onPress}
     >
@@ -49,13 +49,11 @@ const getStyles = (colors: ColorScheme) =>
   StyleSheet.create({
     button: {
       marginTop: 20,
-      width: "100%",
-      height: 50,
+      padding: 12,
       borderRadius: 10,
       backgroundColor: colors.primary,
       justifyContent: "center",
       alignItems: "center",
-      paddingHorizontal: 16,
       flexDirection: "row",
       gap: 8,
       overflow: "hidden",
