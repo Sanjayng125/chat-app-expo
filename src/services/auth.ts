@@ -46,7 +46,6 @@ export const updateAvatar = async (userId: string, uri: string, mimeType: string
         .upload(filePath, arrayBuffer, { upsert: true, contentType: mimeType })
 
     if (error) {
-        console.log("Error: ", error);
         throw error
     }
 

@@ -71,7 +71,6 @@ const NewConversation = () => {
       router.replace(`/(app)/conversation/${conversation.id}`);
     },
     onError: (error: Error | PostgrestError) => {
-      console.log("Error: ", error);
       Toast.show({
         type: "error",
         text1: "Error",
