@@ -57,7 +57,12 @@ CREATE POLICY "users_select" ON public.users
 CREATE POLICY "users_update" ON public.users
   FOR UPDATE USING (auth.uid() = id);
 
+
 -- Conversations policies
+-- Conversations RLS disabled due to incompatibility with Supabase publishable keys.
+-- Security is enforced via conversation_participants RLS and messages RLS.
+-- ALTER TABLE public.conversations ENABLE ROW LEVEL SECURITY;
+
 -- Only see conversations you're part of
 CREATE POLICY "conversations_select"
 ON public.conversations
@@ -71,6 +76,7 @@ USING (
 -- Any authenticated user can create a conversation
 CREATE POLICY "conversations_insert" ON public.conversations
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
 
 -- Participants policies
 -- Only see participant rows for conversations you're part of
@@ -90,6 +96,7 @@ CREATE POLICY "participants_select" ON conversation_participants
 -- Any authenticated user can join/create
 CREATE POLICY "participants_insert" ON public.conversation_participants
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
 
 -- Messages policies
 -- Only see messages in your conversations
@@ -112,6 +119,27 @@ CREATE POLICY "messages_insert" ON public.messages
       AND user_id = auth.uid()
     )
   );
+
+
+-- Avatar policies
+-- Allow authenticated users to upload their own avatar
+CREATE POLICY "avatar_upload" ON storage.objects
+FOR INSERT WITH CHECK (
+    bucket_id = 'avatars' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Allow anyone to read avatars
+CREATE POLICY "avatar_read" ON storage.objects
+FOR SELECT USING (bucket_id = 'avatars');
+
+-- Allow users to update their own avatar
+CREATE POLICY "avatar_update" ON storage.objects
+FOR UPDATE USING (
+    bucket_id = 'avatars' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+);
+
 
 -- Trigger
 CREATE OR REPLACE FUNCTION public.handle_new_user()

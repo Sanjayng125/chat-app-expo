@@ -1,8 +1,8 @@
 import { ColorScheme } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import { useMessages } from "@/hooks/useMessages";
-import { useRealtime } from "@/hooks/useRealtime";
 import { useTheme } from "@/hooks/useTheme";
+import { supabase } from "@/lib/supabase";
 import { sendMessage } from "@/services/messages";
 import { useAuthStore } from "@/stores/authStore";
 import { Conversation as ConversationType, Message } from "@/types";
@@ -44,7 +44,6 @@ const Conversation = () => {
   const { messages, isLoading, refetch, isRefetching, error } = useMessages(
     id as string,
   );
-  const { channelRef } = useRealtime({ conversationId: id as string });
 
   const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -103,13 +102,13 @@ const Conversation = () => {
         };
 
         return [
-          ...conversations.filter((item) => item.id !== updatedConversation.id),
           updatedConversation,
+          ...conversations.filter((item) => item.id !== updatedConversation.id),
         ];
       },
     );
 
-    channelRef.current?.send({
+    supabase.channel(`conversation:${id}`).send({
       type: "broadcast",
       event: "new_message",
       payload: { new_message },

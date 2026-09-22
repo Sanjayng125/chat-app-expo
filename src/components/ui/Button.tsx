@@ -48,7 +48,6 @@ export default function Button({
 const getStyles = (colors: ColorScheme) =>
   StyleSheet.create({
     button: {
-      marginTop: 20,
       padding: 12,
       borderRadius: 10,
       backgroundColor: colors.primary,

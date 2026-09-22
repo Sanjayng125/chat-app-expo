@@ -2,6 +2,7 @@ import ConversationItem from "@/components/chat/ConversationItem";
 import { ColorScheme } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import { useConversations } from "@/hooks/useConversations";
+import { useRealtime } from "@/hooks/useRealtime";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { getAvatarByName } from "@/utils";
@@ -23,6 +24,7 @@ const Home = () => {
   const { user } = useAuthStore();
   const { conversations, isLoading, error, refetch, isRefetching } =
     useConversations();
+  useRealtime();
   const { colors } = useTheme();
 
   const styles = useMemo(() => getStyles(colors), [colors]);
@@ -42,11 +44,15 @@ const Home = () => {
           <TouchableOpacity style={{ padding: 8 }} activeOpacity={0.6}>
             <Ionicons name="search-outline" size={24} color={colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ padding: 8 }} activeOpacity={0.6}>
+          <TouchableOpacity
+            style={{ padding: 8 }}
+            activeOpacity={0.6}
+            onPress={() => router.push("/(app)/profile")}
+          >
             <Image
               source={{
                 uri:
-                  user?.avatar_url ??
+                  (user?.avatar_url && `${user.avatar_url}v=${Date.now()}`) ??
                   getAvatarByName(user?.full_name ?? "User"),
               }}
               style={styles.myAvatar}

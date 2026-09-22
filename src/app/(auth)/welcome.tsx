@@ -27,7 +27,7 @@ const Welcome = () => {
       <Button
         onPress={() => router.push("/(auth)/sign-up")}
         text="Get Started"
-        style={{ width: "100%" }}
+        style={{ width: "100%", marginTop: 20 }}
       />
 
       <View style={styles.footer}>

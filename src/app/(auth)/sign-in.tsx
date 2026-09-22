@@ -154,6 +154,7 @@ const SignIn = () => {
             text="Sign-In"
             loading={isSignInPending}
             disabled={isSignInPending}
+            style={{ marginTop: 20 }}
           />
 
           <View style={styles.footer}>

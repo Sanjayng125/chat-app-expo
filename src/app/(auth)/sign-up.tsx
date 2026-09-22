@@ -183,6 +183,7 @@ const SignUp = () => {
             text="Sign-Up"
             loading={isSignUpPending}
             disabled={isSignUpPending}
+            style={{ marginTop: 20 }}
           />
 
           <View style={styles.footer}>
