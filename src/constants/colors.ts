@@ -12,12 +12,12 @@ export const Colors = {
             sentText: '#FFFFFF',
             receivedText: '#000000',
         },
-        focus: '#F0ECFF',
+        focus: '#f0ecff80',
         error: '#ff6060',
     },
     dark: {
         background: '#000000',
-        surface: '#1C1C1E',
+        surface: '#232326',
         primary: '#518dfd',
         text: '#FFFFFF',
         textSecondary: '#8E8E93',
@@ -28,7 +28,7 @@ export const Colors = {
             sentText: '#FFFFFF',
             receivedText: '#FFFFFF',
         },
-        focus: '#F0ECFF',
+        focus: '#f0ecff80',
         error: '#ff6060',
     },
 };

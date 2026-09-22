@@ -123,6 +123,7 @@ const SignIn = () => {
                   autoCapitalize="none"
                   value={value}
                   onChangeText={onChange}
+                  style={{ marginTop: 20 }}
                 />
               )}
             />
@@ -141,6 +142,7 @@ const SignIn = () => {
                   secureTextEntry
                   value={value}
                   onChangeText={onChange}
+                  style={{ marginTop: 20 }}
                 />
               )}
             />

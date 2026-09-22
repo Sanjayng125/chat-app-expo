@@ -16,6 +16,7 @@ export default function TextField(props: TextInputProps) {
       style={[styles.input, isFocused && styles.inputFocused, props.style]}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
+      placeholderTextColor={colors.textSecondary}
     />
   );
 }
@@ -23,20 +24,21 @@ export default function TextField(props: TextInputProps) {
 const getStyles = (colors: ColorScheme) =>
   StyleSheet.create({
     input: {
-      marginTop: 20,
-      width: "100%",
+      flex: 1,
       height: 50,
       borderRadius: 10,
       backgroundColor: colors.surface,
+      color: colors.text,
       justifyContent: "center",
       alignItems: "center",
       paddingHorizontal: 16,
       borderWidth: 1,
-      borderColor: "transparent",
+      borderColor: colors.border,
+      fontSize: 16,
       fontFamily: Fonts.regular,
     },
     inputFocused: {
-      borderColor: colors.primary,
-      backgroundColor: colors.focus,
+      borderColor: colors.focus,
+      backgroundColor: colors.background,
     },
   });

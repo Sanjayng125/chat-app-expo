@@ -133,6 +133,7 @@ const SignUp = () => {
                   placeholder="Full Name"
                   value={value}
                   onChangeText={onChange}
+                  style={{ marginTop: 20 }}
                 />
               )}
             />
@@ -152,6 +153,7 @@ const SignUp = () => {
                   autoCapitalize="none"
                   value={value}
                   onChangeText={onChange}
+                  style={{ marginTop: 20 }}
                 />
               )}
             />
@@ -170,6 +172,7 @@ const SignUp = () => {
                   secureTextEntry
                   value={value}
                   onChangeText={onChange}
+                  style={{ marginTop: 20 }}
                 />
               )}
             />

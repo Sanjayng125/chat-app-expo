@@ -140,6 +140,13 @@ FOR UPDATE USING (
     auth.uid()::text = (storage.foldername(name))[1]
 );
 
+-- Allow users to delete their own avatar
+CREATE POLICY "avatar_delete" ON storage.objects
+FOR DELETE USING (
+    bucket_id = 'avatars' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+);
+
 
 -- Trigger
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -160,3 +167,12 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+
+-- Delete user function
+CREATE OR REPLACE FUNCTION public.delete_user()
+RETURNS void
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  DELETE FROM auth.users WHERE id = auth.uid();
+$$;

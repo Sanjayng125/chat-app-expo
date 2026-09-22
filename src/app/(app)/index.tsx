@@ -52,7 +52,7 @@ const Home = () => {
             <Image
               source={{
                 uri:
-                  (user?.avatar_url && `${user.avatar_url}v=${Date.now()}`) ??
+                  user?.avatar_url ??
                   getAvatarByName(user?.full_name ?? "User"),
               }}
               style={styles.myAvatar}

@@ -1,3 +1,4 @@
+import TextField from "@/components/ui/TextField";
 import UserItem from "@/components/user/UserItem";
 import { ColorScheme } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
@@ -18,7 +19,6 @@ import {
   Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -101,11 +101,11 @@ const NewConversation = () => {
         </View>
 
         <View style={styles.searchContainer}>
-          <TextInput
+          <TextField
             placeholder="Search for a friend..."
-            style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
+            style={{ backgroundColor: colors.background }}
           />
           {isSearchingUsers && (
             <ActivityIndicator
@@ -186,19 +186,9 @@ const getStyles = (colors: ColorScheme) =>
       position: "relative",
       overflow: "hidden",
     },
-    searchInput: {
-      flex: 1,
-      fontSize: 16,
-      color: colors.text,
-      fontFamily: Fonts.bold,
-      backgroundColor: colors.background,
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 12,
-    },
     searchLoader: {
       position: "absolute",
-      right: 0,
+      right: 1,
       paddingHorizontal: 10,
       paddingVertical: 14,
       backgroundColor: colors.background,

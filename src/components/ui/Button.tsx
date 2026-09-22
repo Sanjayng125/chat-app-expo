@@ -16,6 +16,7 @@ type ButtonProps = {
   txtStyles?: StyleProp<TextStyle>;
   text?: string;
   loading?: boolean;
+  small?: boolean;
 } & TouchableOpacityProps;
 
 export default function Button({
@@ -26,6 +27,7 @@ export default function Button({
   children,
   loading,
   disabled,
+  small,
 }: ButtonProps) {
   const { colors } = useTheme();
 
@@ -34,11 +36,20 @@ export default function Button({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[styles.button, btnStyles, disabled && { opacity: 0.5 }]}
+      style={[
+        styles.button,
+        btnStyles,
+        disabled && { opacity: 0.5 },
+        small && { padding: 10 },
+      ]}
       disabled={disabled}
       onPress={onPress}
     >
-      {text && <Text style={[txtStyles, styles.buttonText]}>{text}</Text>}
+      {text && (
+        <Text style={[styles.buttonText, txtStyles, small && { fontSize: 16 }]}>
+          {text}
+        </Text>
+      )}
       {!text && children}
       {loading && <ActivityIndicator size="small" color={colors.background} />}
     </TouchableOpacity>

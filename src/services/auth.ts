@@ -56,7 +56,9 @@ export const updateAvatar = async (userId: string, uri: string, mimeType: string
 
     if (!data) throw new Error('Failed to get public URL');
 
-    const { data: updatedUser, error: updateError } = await supabase.from('users').update({ avatar_url: data.publicUrl }).eq('id', userId).select().single()
+    const cacheBustedUrl = `${data.publicUrl}?t=${Date.now()}`;
+
+    const { data: updatedUser, error: updateError } = await supabase.from('users').update({ avatar_url: cacheBustedUrl }).eq('id', userId).select().single()
 
     if (updateError) {
         await supabase.storage.from('avatars').remove([filePath])
@@ -64,7 +66,8 @@ export const updateAvatar = async (userId: string, uri: string, mimeType: string
     }
 
     if (oldFileURL) {
-        const oldPath = new URL(oldFileURL).pathname.split("/avatars/")[1];
+        const cleanUrl = oldFileURL.split('?')[0];
+        const oldPath = new URL(cleanUrl).pathname.split("/avatars/")[1];
 
         if (oldPath && oldPath !== filePath) {
             await supabase.storage.from("avatars").remove([oldPath]);
@@ -72,4 +75,27 @@ export const updateAvatar = async (userId: string, uri: string, mimeType: string
     }
 
     return updatedUser;
+}
+
+export const deleteAccount = async (avatar_url?: string) => {
+    if (avatar_url) {
+        const cleanUrl = avatar_url.split('?')[0];
+        const pathname = new URL(cleanUrl).pathname;
+        const filePath = pathname.split("/avatars/")[1];
+
+        if (filePath) {
+            const { error: storageError } = await supabase.storage
+                .from("avatars")
+                .remove([filePath]);
+
+            if (storageError) {
+                throw new Error('Failed to delete avatar');
+            }
+        }
+    }
+
+    const { error } = await supabase.rpc('delete_user');
+    if (error) throw error;
+
+    return true;
 }

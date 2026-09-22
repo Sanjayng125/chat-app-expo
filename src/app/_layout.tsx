@@ -1,7 +1,6 @@
 import { useTheme } from "@/hooks/useTheme";
 import queryClient from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
-import { getUser } from "@/services/auth";
 import { useAuthStore } from "@/stores/authStore";
 import {
   Nunito_300Light,
@@ -23,7 +22,7 @@ import Toast from "react-native-toast-message";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { setSession, setUser } = useAuthStore();
+  const { setSession, getUser } = useAuthStore();
   const { colors } = useTheme();
 
   const [fontsLoaded] = useFonts({
@@ -42,29 +41,19 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
       if (data.session) {
-        getUser(data.session.user.id)
-          .then(setUser)
-          .catch(() => {
-            setUser(null);
-          });
+        await getUser();
       }
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (session) {
-        getUser(session.user.id)
-          .then(setUser)
-          .catch(() => {
-            setUser(null);
-          });
-      } else {
-        setUser(null);
+        await getUser();
       }
     });
 

@@ -1,3 +1,4 @@
+import TextField from "@/components/ui/TextField";
 import { ColorScheme } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import { useMessages } from "@/hooks/useMessages";
@@ -20,7 +21,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -224,9 +224,9 @@ const Conversation = () => {
         )}
 
         <View style={styles.inputContainer}>
-          <TextInput
+          <TextField
             placeholder="Type a message..."
-            style={styles.messageInput}
+            placeholderTextColor={colors.textSecondary}
             value={message}
             onChangeText={(text) => setMessage(text)}
           />
@@ -290,16 +290,6 @@ const getStyles = (colors: ColorScheme) =>
       alignItems: "center",
       gap: 8,
     },
-    messageInput: {
-      flex: 1,
-      fontSize: 16,
-      color: colors.text,
-      fontFamily: Fonts.bold,
-      backgroundColor: colors.surface,
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 12,
-    },
     sendBtn: {
       backgroundColor: colors.primary,
       padding: 10,
@@ -320,14 +310,14 @@ const getStyles = (colors: ColorScheme) =>
       marginVertical: 10,
     },
     myMessageContainer: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.bubble.sent,
       marginLeft: "auto",
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,
       borderBottomLeftRadius: 12,
     },
     otherMessageContainer: {
-      backgroundColor: colors.surface,
+      backgroundColor: colors.bubble.received,
       borderTopRightRadius: 12,
       borderTopLeftRadius: 12,
       borderBottomRightRadius: 12,
@@ -337,10 +327,10 @@ const getStyles = (colors: ColorScheme) =>
       fontFamily: Fonts.bold,
     },
     myMessage: {
-      color: colors.background,
+      color: colors.bubble.sentText,
     },
     otherMessage: {
-      color: colors.text,
+      color: colors.bubble.receivedText,
     },
     messageTime: {
       fontSize: 12,
@@ -348,10 +338,10 @@ const getStyles = (colors: ColorScheme) =>
       marginLeft: "auto",
     },
     myMessageTime: {
-      color: colors.background,
+      color: colors.bubble.sentText,
     },
     otherMessageTime: {
-      color: colors.text,
+      color: colors.bubble.receivedText,
     },
     emptyContainer: {
       flex: 1,
