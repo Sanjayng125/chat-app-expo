@@ -176,3 +176,48 @@ SECURITY DEFINER
 AS $$
   DELETE FROM auth.users WHERE id = auth.uid();
 $$;
+
+-- ============================================================
+-- VIEW: get_my_convos
+-- ============================================================
+
+CREATE OR REPLACE VIEW public.get_my_convos AS
+WITH cid AS (
+  SELECT
+    cp.conversation_id,
+    (SELECT JSONB_BUILD_OBJECT(
+        'id', id,
+        'sender_id', sender_id,
+        'content', content,
+        'created_at', created_at
+      )
+      FROM messages m
+      WHERE m.conversation_id = cp.conversation_id
+      ORDER BY m.created_at DESC
+      LIMIT 1
+    ) AS last_message
+  FROM conversation_participants cp
+  WHERE user_id = auth.uid()
+),
+ous AS (
+  SELECT
+    cp.conversation_id AS id,
+    cp.joined_at AS created_at,
+    JSONB_AGG(
+      JSONB_BUILD_OBJECT(
+        'id', u.id,
+        'email', u.email,
+        'full_name', u.full_name,
+        'avatar_url', u.avatar_url
+      )
+    ) AS other_users,
+    cid.last_message
+  FROM conversation_participants cp
+  JOIN users u ON cp.user_id = u.id
+  JOIN cid ON cid.conversation_id = cp.conversation_id
+  WHERE cp.user_id != auth.uid()
+  GROUP BY cp.conversation_id, cp.joined_at, cid.last_message
+)
+
+SELECT * FROM ous
+ORDER BY (last_message->>'created_at')::timestamptz DESC NULLS LAST;
